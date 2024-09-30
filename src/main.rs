@@ -1,3 +1,5 @@
+mod apis;
+mod headers;
 mod models;
 
 #[tokio::main]
@@ -7,24 +9,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .author("shashank")
         .about("tool to download mangas")
         .subcommand(
-            clap::Command::new("search")
+            clap::Command::new("manga")
                 .about("search for top mangas matching the given args")
                 .arg(
-                    clap::Arg::new("query")
+                    clap::Arg::new("manga")
                         .help("the search query")
-                        .required(true)
-                        .index(1),
+                        .required(true),
                 ),
         )
         .subcommand(
-            clap::Command::new("info")
-                .about("get the info for manga")
+            clap::Command::new("chapters")
+                .about("get chapters of a manga")
                 .arg(
-                    clap::Arg::new("info")
+                    clap::Arg::new("chapters")
                         //  NOTE: this may take manga hid instead of just name
                         .help("manga name to get info about")
-                        .required(true)
-                        .index(1),
+                        .required(true),
                 ),
         )
         .subcommand(
@@ -33,24 +33,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .arg(
                     clap::Arg::new("download")
                         .help("the download query")
-                        .required(true)
-                        .index(1),
+                        .required(true),
                 ),
         )
         .get_matches();
 
     match matches.subcommand() {
-        Some(("search", sub_matches)) => {
-            let query = sub_matches.get_one::<String>("search").expect("Required");
+        Some(("manga", sub_matches)) => {
+            let query = sub_matches.get_one::<String>("manga").expect("Required");
             println!("Searching for: {}", query);
+
+            apis::search_mangas(&query)
+                .await
+                .expect("error for search_mangas function");
         }
-        Some(("info", sub_matches)) => {
-            let info = sub_matches.get_one::<String>("info").expect("Required");
-            println!("Getting info about: {}", item);
+        Some(("chapters", sub_matches)) => {
+            let chapters = sub_matches.get_one::<String>("chapters").expect("Required");
+
+            apis::chapters(&chapters)
+                .await
+                .expect("chapters method in main\n");
         }
         Some(("download", sub_matches)) => {
             let download = sub_matches.get_one::<String>("download").expect("Required");
-            println!("Downloading from: {}", url);
+            println!("Downloading from: {}", download);
         }
         _ => println!("Please use a valid subcommand. Use --help for more information."),
     }
