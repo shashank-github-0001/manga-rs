@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .about("tool to download mangas")
         .subcommand(
             clap::Command::new("manga")
-                .about("search for top mangas matching the given args")
+                .about("fuzzy search for manga names")
                 .arg(
                     clap::Arg::new("manga")
                         .help("the search query")
@@ -19,17 +19,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .subcommand(
             clap::Command::new("chapters")
-                .about("get chapters of a manga")
+                .about("give manga hid")
                 .arg(
                     clap::Arg::new("chapters")
-                        //  NOTE: this may take manga hid instead of just name
                         .help("manga name to get info about")
                         .required(true),
                 ),
         )
         .subcommand(
             clap::Command::new("download")
-                .about("give the name of the manga to download")
+                .about("give chapter hid")
                 .arg(
                     clap::Arg::new("download")
                         .help("the download query")
@@ -57,7 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(("download", sub_matches)) => {
             let download = sub_matches.get_one::<String>("download").expect("Required");
 
-            apis::download_manga(&download)
+            apis::download_and_process_images(&download)
                 .await
                 .expect("download_manga method in main.rs\n");
         }

@@ -2,14 +2,14 @@
 pub struct Manga {
     pub id: i32,
     pub hid: String,
-    pub title: String,
+    pub title: Option<String>,
     pub desc: Option<String>,
 }
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct Chapter {
     pub id: i32,
-    pub chap: String,
+    pub chap: Option<String>,
     pub title: Option<String>,
     pub volume: Option<String>,
     pub hid: String,
@@ -24,6 +24,6 @@ pub struct ChaptersResponse {
 pub struct Images{
     pub h: u32,
     pub w: u32,
-    pub name: String,
+    pub name: Option<String>,
     pub b2key: String,
 }
