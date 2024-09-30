@@ -56,7 +56,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         Some(("download", sub_matches)) => {
             let download = sub_matches.get_one::<String>("download").expect("Required");
-            println!("Downloading from: {}", download);
+
+            apis::download_manga(&download)
+                .await
+                .expect("download_manga method in main.rs\n");
         }
         _ => println!("Please use a valid subcommand. Use --help for more information."),
     }

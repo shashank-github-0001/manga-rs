@@ -19,3 +19,11 @@ pub struct Chapter {
 pub struct ChaptersResponse {
     pub chapters: Vec<Chapter>,
 }
+
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
+pub struct Images{
+    pub h: u32,
+    pub w: u32,
+    pub name: String,
+    pub b2key: String,
+}
