@@ -9,10 +9,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .author("shashank")
         .about("tool to download mangas")
         .subcommand(
-            clap::Command::new("manga")
+            clap::Command::new("search")
                 .about("fuzzy search for manga names")
                 .arg(
-                    clap::Arg::new("manga")
+                    clap::Arg::new("search")
                         .help("the search query")
                         .required(true),
                 ),
@@ -35,16 +35,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .required(true),
                 ),
         )
+        .subcommand(
+            clap::Command::new("download_all")
+                .about("give chapter hid")
+                .arg(
+                    clap::Arg::new("download_all")
+                        .help("the download_all query to download all chapters of a manga")
+                        .required(true),
+                ),
+        )
         .get_matches();
 
     match matches.subcommand() {
-        Some(("manga", sub_matches)) => {
-            let query = sub_matches.get_one::<String>("manga").expect("Required");
+        Some(("search", sub_matches)) => {
+            let query = sub_matches.get_one::<String>("search").expect("Required");
             println!("Searching for: {}", query);
 
             apis::search_mangas(&query)
                 .await
-                .expect("error for search_mangas function");
+                .expect("error for search_mangas function\n");
         }
         Some(("chapters", sub_matches)) => {
             let chapters = sub_matches.get_one::<String>("chapters").expect("Required");
@@ -59,6 +68,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             apis::download_and_process_images(&download)
                 .await
                 .expect("download_manga method in main.rs\n");
+        }
+        Some(("download_all", sub_matches)) => {
+            let download = sub_matches.get_one::<String>("download_all").expect("Required");
+
+            apis::download_all_chapters(&download)
+                .await
+                .expect("download_all_manga method in main.rs\n");
         }
         _ => println!("Please use a valid subcommand. Use --help for more information."),
     }
